@@ -1,0 +1,148 @@
+---
+title: "Skilaverkefni 1"
+author: "Emil Gauti Friðriksson (egf3@hi.is)"
+date: "15 janúar 2017"
+output: html_document
+---
+
+### Hluti 1
+#### a)
+
+```{r}
+library(dplyr)
+eg <- read.table("gagnasafn.csv", header = TRUE, sep = ";")
+```
+
+#### b)
+Veljum hverfi 25(Miðborg frá Bræðrarborgarstíg að Tjörn), 91(Háaleiti/Skeifa) og 283(Hvassaleiti)
+```{r}
+library(dplyr)
+hverfi <- c(25, 91, 283)
+eg <- filter(eg, matssvaedi%in%hverfi)
+str(eg)
+```
+
+#### c)
+Könnum gerð breytanna:
+```{r}
+str(eg)
+eg$matssvaedi <- factor(eg$matssvaedi)
+str(eg)
+eg$matssvaedi <- as.character(eg$matssvaedi)
+eg$matssvaedi[eg$matssvaedi == "25"] <- "Miðborg(25)"
+eg$matssvaedi[eg$matssvaedi == "91"] <- "Háaleiti(91)"
+eg$matssvaedi[eg$matssvaedi == "283"] <- "Hvassaleiti(283)"
+
+```
+
+### Hluti 2
+
+#### a)
+
+```{r}
+library(ggplot2)
+ggplot(eg, aes(x = matssvaedi, fill = teg_eign)) +
+  labs(x= "Hverfi", y = "Fjöldi", fill = "tegund eigna") +
+geom_bar(position='dodge') +
+xlab('Hverfi') + ylab('Fjöldi')
+```
+
+#### b)
+
+```{r}
+einbyli <- filter(eg, teg_eign == "Einbýlishús")
+ggplot(einbyli, aes(x=matssvaedi, y=ibm2)) + geom_boxplot() +
+xlab('Hverfi') + ylab('Stærð eignar')
+```
+
+#### c)
+
+```{r}
+ibudir <- filter(eg, teg_eign == "Íbúðareign")
+ggplot(ibudir,aes(x=nuvirdi, y=ibm2)) + geom_point() +
+xlab('Núvirði') + ylab('Stærð eignar') 
+#+ geom_smooth(method='lm')
+```
+
+
+### Hluti 3)
+
+#### a)
+Fjöldi einbýlishúsa & íbúðareignar eftir hverfum og Hlutfall einbýlishúsa & íbúðareigna
+
+```{r}
+table(eg$matssvaedi, eg$teg_eign)
+round(prop.table(table(eg$matssvaedi, eg$teg_eign), margin =1), 4)
+
+```
+
+#### b)
+Meðaltal fermetrafjölda í einbýlishúsum þessara hverfa:
+```{r}
+tapply(einbyli$ibm2, einbyli$matssvaedi, mean)
+```
+Miðgildi fermetrafjölda í einbýlishúsum þessara hverfa:
+```{r}
+tapply(einbyli$ibm2, einbyli$matssvaedi, median)
+```
+Fjórðungsmörk fermetrafjölda þessara hverfa:
+```{r}
+tapply(einbyli$ibm2, einbyli$matssvaedi, quantile)
+```
+lægstu og hæstu gildi á fermetrafjölda:
+```{r}
+tapply(einbyli$ibm2,einbyli$matssvaedi,range,na.rm=T)
+```
+
+
+#### c)
+Viðeigandi lýsistærðir:
+```{r}
+litlar<-filter(ibudir, ibm2>=50 & ibm2 <=60)
+```
+Meðalverð:
+```{r}
+tapply(litlar$nuvirdi, litlar$matssvaedi, mean)
+```
+
+Miðgildi verðs:
+
+```{r}
+tapply(litlar$nuvirdi, litlar$matssvaedi, median)
+```
+
+Staðalfrávik:
+```{r}
+tapply(litlar$nuvirdi, litlar$matssvaedi, sd)
+```
+Fjöldi eigna eftir hverfum:
+```{r}
+table(litlar$matssvaedi)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
